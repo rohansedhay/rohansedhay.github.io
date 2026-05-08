@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Private Archive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════
+   ROOT & RESET
+═══════════════════════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bark:    #13100a;
+  --mahog:   #1e1409;
+  --umber:   #2a1c0d;
+  --sienna:  #3d2510;
+  --walnut:  #5c3818;
+  --tan:     #8a5a2c;
+  --bronze:  #a06b38;
+  --parch:   #c8a878;
+  --cream:   #e0cdb0;
+  --linen:   #ece0c8;
+
+  --moss:    #080e09;
+  --grove:   #0e1810;
+  --fern:    #162014;
+  --leaf:    #1e2e1a;
+  --sage:    #2a4028;
+  --mint:    #4a6e48;
+  --dew:     #7a9e78;
+
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body:    'EB Garamond', Georgia, serif;
+  --font-mono:    'Space Mono', monospace;
+
+  --ease-silk: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  background: var(--bark);
+  color: var(--cream);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  cursor: default;
+}
+
+a { text-decoration: none; color: inherit; cursor: pointer; }
+ul { list-style: none; }
+img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* ═══════════════════════════════════════════════════════
+   GRAIN OVERLAY
+═══════════════════════════════════════════════════════ */
+.grain {
+  position: fixed; inset: 0; pointer-events: none; z-index: 999;
+  opacity: 0.032;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 220px;
+}
+
+/* ═══════════════════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════════════════ */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 3.5rem;
+  background: linear-gradient(to bottom, rgba(19,16,10,0.96) 0%, rgba(19,16,10,0.0) 100%);
+  transition: background 0.5s ease;
+}
+.nav.scrolled { background: rgba(19,16,10,0.97); border-bottom: 1px solid rgba(138,90,44,0.12); }
+
+.nav-mark {
+  font-family: var(--font-display);
+  font-size: 0.92rem; font-weight: 300; font-style: italic;
+  color: var(--bronze); letter-spacing: 0.06em;
+  opacity: 0.8;
+}
+
+.nav-links { display: flex; gap: 2.8rem; }
+.nav-links a {
+  font-family: var(--font-mono);
+  font-size: 0.52rem; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--parch); opacity: 0.45;
+  transition: opacity 0.35s ease, color 0.35s ease;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute; bottom: -3px; left: 0; right: 0;
+  height: 1px; background: var(--bronze);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.4s var(--ease-silk);
+}
+.nav-links a:hover { opacity: 1; color: var(--cream); }
+.nav-links a:hover::after { transform: scaleX(1); }
+
+/* ═══════════════════════════════════════════════════════
+   PAGE SECTIONS — wrapper
+═══════════════════════════════════════════════════════ */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ═══════════════════════════════════════════════════════
+   HERO
+═══════════════════════════════════════════════════════ */
+#home {
+  min-height: 100vh;
+  display: grid; grid-template-columns: 1fr 1fr;
+  background: var(--bark);
+  padding-top: 64px;
+}
+
+.hero-left {
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 0 3.5rem 6rem;
+}
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.52rem; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--bronze); margin-bottom: 2.4rem;
+  opacity: 0;
+  animation: riseIn 1.1s ease 0.4s forwards;
+}
+.hero-h1 {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 5.5vw, 5.2rem);
+  font-weight: 300; line-height: 1.02; letter-spacing: -0.02em;
+  color: var(--linen); margin-bottom: 2rem;
+  opacity: 0;
+  animation: riseIn 1.1s ease 0.6s forwards;
+}
+.hero-h1 em { font-style: italic; color: var(--parch); }
+
+.hero-rule {
+  width: 40px; height: 1px; background: var(--bronze);
+  margin-bottom: 1.8rem; opacity: 0;
+  animation: riseIn 1.1s ease 0.8s forwards;
+}
+.hero-sub {
+  font-family: var(--font-body);
+  font-size: 0.92rem; line-height: 1.9;
+  color: var(--parch); opacity: 0;
+  font-style: italic;
+  max-width: 38ch;
+  animation: riseIn 1.1s ease 1.0s forwards;
+}
+.hero-byline {
+  font-family: var(--font-mono);
+  font-size: 0.44rem; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--bronze); opacity: 0;
+  margin-top: 1.2rem;
+  animation: riseIn 1.1s ease 1.18s forwards;
+}
+.hero-name {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
+  font-weight: 300; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--parch); opacity: 0;
+  margin-top: 2.8rem;
+  animation: riseIn 1.1s ease 1.35s forwards;
+}
+
+.hero-right {
+  position: relative; overflow: hidden;
+  background: var(--mahog);
+  border-left: 1px solid rgba(138,90,44,0.1);
+}
+.hero-art { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+
+.hero-scroll {
+  position: absolute; bottom: 2.8rem; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+  opacity: 0; animation: fadeIn 1.5s ease 2s forwards;
+}
+.hero-scroll-line {
+  width: 1px; height: 44px;
+  background: linear-gradient(to bottom, transparent, var(--bronze));
+  animation: drip 2.4s ease-in-out infinite;
+}
+.hero-scroll-txt {
+  font-family: var(--font-mono);
+  font-size: 0.46rem; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--bronze); opacity: 0.6;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION SHARED
+═══════════════════════════════════════════════════════ */
+.sec { padding: 6rem 3.5rem; }
+.sec-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 3.5rem; padding-bottom: 1.5rem;
+  border-bottom: 1px solid rgba(138,90,44,0.12);
+}
+.sec-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.8vw, 3.2rem);
+  font-weight: 300; letter-spacing: -0.01em; color: var(--linen);
+}
+.sec-more {
+  font-family: var(--font-mono);
+  font-size: 0.5rem; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--bronze); opacity: 0.55;
+  transition: opacity 0.3s ease;
+}
+.sec-more:hover { opacity: 1; }
+
+/* ═══════════════════════════════════════════════════════
+   JOURNAL — Boston Public Library + Roman Archive
+═══════════════════════════════════════════════════════ */
+#journal { background: var(--mahog); }
+
+.library-shelf {
+  display: grid;
+  grid-template-columns: 3fr 1px 2fr;
+  min-height: 500px;
+}
+.shelf-div { background: rgba(138,90,44,0.15); }
+
+.featured-essay { padding: 2.5rem 3.5rem 2.5rem 0; }
+.essay-vol {
+  font-family: var(--font-mono);
+  font-size: 0.48rem; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--bronze); margin-bottom: 1rem; opacity: 0.65;
+}
+.essay-ornament {
+  font-family: var(--font-display);
+  font-size: 1.2rem; color: var(--sienna); opacity: 0.4;
+  margin-bottom: 1.5rem; letter-spacing: 0.3em;
+}
+.essay-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+  font-weight: 400; line-height: 1.18; color: var(--linen);
+  margin-bottom: 1.5rem;
+}
+.essay-title em { font-style: italic; color: var(--parch); }
+.essay-rule { width: 28px; height: 1px; background: var(--sienna); opacity: 0.5; margin-bottom: 1.5rem; }
+.essay-abstract {
+  font-family: var(--font-body);
+  font-size: 0.9rem; line-height: 1.95;
+  color: var(--parch); opacity: 0.72; max-width: 54ch;
+  margin-bottom: 2rem;
+}
+.essay-byline {
+  font-family: var(--font-mono);
+  font-size: 0.48rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--walnut);
+}
+
+.essay-list { padding: 2.5rem 0 2.5rem 3rem; }
+.entry-row {
+  display: flex; gap: 1.2rem;
+  padding: 1.4rem 0;
+  border-bottom: 1px solid rgba(138,90,44,0.09);
+  cursor: pointer;
+  transition: padding-left 0.3s ease;
+}
+.entry-row:last-child { border-bottom: none; }
+.entry-row:hover { padding-left: 0.5rem; }
+.entry-row:hover .entry-title { color: var(--linen); }
+.entry-num {
+  font-family: var(--font-display);
+  font-size: 0.75rem; font-style: italic;
+  color: var(--bronze); opacity: 0.35; padding-top: 0.1rem; min-width: 1.6rem;
+}
+.entry-cat {
+  font-family: var(--font-mono);
+  font-size: 0.44rem; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--bronze); margin-bottom: 0.4rem; opacity: 0.55;
+}
+.entry-title {
+  font-family: var(--font-display);
+  font-size: 0.98rem; font-weight: 400; line-height: 1.35;
+  color: var(--parch); transition: color 0.3s ease;
+}
+.entry-meta {
+  font-family: var(--font-mono);
+  font-size: 0.42rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--sienna); margin-top: 0.35rem;
+}
+
+/* ═══════════════════════════════════════════════════════
+   PROJECTS — Shenzhen / Gas Station Snowstorm
+═══════════════════════════════════════════════════════ */
+#projects { background: #060908; padding-bottom: 5rem; }
+#projects .sec-title { color: var(--dew); }
+#projects .sec-more { color: var(--mint); }
+#projects .sec-head { border-bottom-color: rgba(42,64,40,0.2); }
+
+.project-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1px;
+  background: rgba(22,32,20,0.5);
+}
+.proj {
+  background: #060908;
+  padding: 2.8rem 2.2rem;
+  cursor: pointer; position: relative; overflow: hidden;
+  transition: background 0.45s ease;
+}
+.proj:hover { background: #0c1410; }
+.proj:hover .proj-title { color: var(--dew); }
+.proj:hover .proj-arrow { opacity: 1; transform: translateX(0); }
+
+.proj.s7 { grid-column: span 7; border-right: 1px solid rgba(22,32,20,0.8); }
+.proj.s5 { grid-column: span 5; }
+.proj.s4 { grid-column: span 4; border-right: 1px solid rgba(22,32,20,0.8); border-top: 1px solid rgba(22,32,20,0.8); }
+.proj.s8 { grid-column: span 8; border-top: 1px solid rgba(22,32,20,0.8); }
+
+.proj-id {
+  font-family: var(--font-mono);
+  font-size: 0.46rem; letter-spacing: 0.22em; color: var(--sage);
+  margin-bottom: 1.2rem; opacity: 0.5;
+}
+.proj-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.44rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--mint); border: 1px solid rgba(74,110,72,0.22);
+  padding: 0.25rem 0.6rem; margin-bottom: 1.2rem;
+}
+.proj-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem; font-weight: 400;
+  color: var(--dew); line-height: 1.25; margin-bottom: 0.8rem;
+  transition: color 0.35s ease;
+}
+.proj-desc {
+  font-family: var(--font-mono);
+  font-size: 0.55rem; line-height: 1.75;
+  color: var(--sage); opacity: 0.55;
+}
+.proj-glyph {
+  position: absolute; bottom: 1.2rem; right: 1.5rem;
+  font-family: var(--font-mono); font-size: 3.8rem; font-weight: 700;
+  color: rgba(42,64,40,0.07); line-height: 1; user-select: none;
+}
+.proj-arrow {
+  position: absolute; bottom: 1.5rem; right: 1.8rem;
+  font-family: var(--font-mono); font-size: 0.5rem; letter-spacing: 0.1em;
+  color: var(--mint); opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+/* Snow particles */
+.snow-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.flake {
+  position: absolute; border-radius: 50%;
+  background: rgba(140,180,140,0.25);
+  animation: snowfall linear infinite;
+}
+@keyframes snowfall {
+  from { transform: translateY(-8px) translateX(0px); opacity: 0; }
+  10%  { opacity: 1; }
+  88%  { opacity: 0.5; }
+  to   { transform: translateY(360px) translateX(18px); opacity: 0; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   PHOTOGRAPHY — Como / Kyoto / Sahara
+═══════════════════════════════════════════════════════ */
+#photography { background: var(--bark); padding-bottom: 5rem; }
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: 520px 380px 240px;
+  gap: 4px;
+}
+
+.pslot {
+  position: relative; overflow: hidden; cursor: pointer;
+  background: var(--mahog);
+}
+.pslot img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover;
+  display: block;
+  filter: brightness(0.88) contrast(1.03) saturate(0.9);
+  transition: transform 0.9s var(--ease-silk), filter 0.6s ease;
+  z-index: 1;
+}
+.pslot:hover img {
+  transform: scale(1.04);
+  filter: brightness(0.95) contrast(1.01) saturate(0.96);
+}
+.pslot .pcap { z-index: 2; }
+.pslot::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(19,16,10,0.6) 0%, transparent 48%);
+  pointer-events: none; z-index: 1;
+}
+
+.pslot.a { grid-column: 1 / 8;  grid-row: 1; }
+.pslot.b { grid-column: 8 / 13; grid-row: 1; }
+.pslot.c { grid-column: 1 / 5;  grid-row: 2; }
+.pslot.d { grid-column: 5 / 9;  grid-row: 2; }
+.pslot.e { grid-column: 9 / 13; grid-row: 2; }
+.pslot.f { grid-column: 1 / 6;  grid-row: 3; }
+.pslot.g { grid-column: 6 / 13; grid-row: 3; }
+
+.pcap {
+  position: absolute; bottom: 1.2rem; left: 1.4rem; right: 1.4rem;
+  z-index: 2;
+  display: flex; justify-content: space-between; align-items: flex-end;
+  opacity: 0; transform: translateY(5px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.pslot:hover .pcap { opacity: 1; transform: translateY(0); }
+.pcap-place {
+  font-family: var(--font-display);
+  font-size: 1rem; font-weight: 300; font-style: italic;
+  color: rgba(224,205,176,0.65);
+}
+.pcap-num {
+  font-family: var(--font-mono);
+  font-size: 0.42rem; letter-spacing: 0.18em;
+  color: rgba(160,107,56,0.5);
+}
+
+/* Atmosphere fills — shown when no real image present */
+.atm { position: absolute; inset: 0; }
+.atm-como-hero {
+  background:
+    radial-gradient(ellipse 80% 40% at 30% 65%, rgba(42,64,80,0.5) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 35% at 75% 60%, rgba(30,50,65,0.4) 0%, transparent 50%),
+    linear-gradient(180deg, #7a8fa8 0%, #5a7288 10%, #3a5268 22%, #2a4058 36%, #324d3a 50%, #223828 62%, #162415 74%, #0e160e 88%, #0a1009 100%);
+}
+.atm-como-hero::before {
+  content: ''; position: absolute; bottom: 30%; left: 0; right: 0; height: 1px;
+  background: rgba(180,210,230,0.07);
+}
+.atm-sahara {
+  background: linear-gradient(180deg, #1e1408 0%, #2a1c0a 12%, #3a2610 22%, #4e3418 32%, #3a2610 46%, #261808 60%, #180e04 72%, #0e0804 85%, #080504 100%);
+}
+.atm-kyoto-wide {
+  background:
+    radial-gradient(ellipse 70% 55% at 45% 35%, rgba(30,46,24,0.7) 0%, transparent 55%),
+    radial-gradient(circle at 35% 20%, rgba(200,170,110,0.05) 0%, transparent 30%),
+    linear-gradient(180deg, #0c1409 0%, #121c0e 14%, #1a2814 28%, #202e18 42%, #162410 56%, #0e1a0a 70%, #0a1208 82%, #0e1810 92%, #0a100a 100%);
+}
+.atm-water {
+  background: linear-gradient(180deg, #2a3e54 0%, #1e3044 25%, #182838 48%, #20303e 65%, #141e2a 80%, #0a1218 100%);
+}
+.atm-water::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(175deg, transparent 0px, transparent 5px, rgba(160,200,220,0.018) 5px, rgba(160,200,220,0.018) 6px); }
+.atm-moss {
+  background: linear-gradient(160deg, #131e0e 0%, #1a2a12 25%, #162410 45%, #101c0c 65%, #0e1a0a 80%, #0a1408 100%);
+}
+.atm-dusk {
+  background: linear-gradient(180deg, #2a1c08 0%, #3e2a0e 15%, #5a3c14 28%, #3e2a0e 44%, #281a08 60%, #180e04 74%, #0e0804 88%, #080402 100%);
+}
+
+/* Villa, cypress, bonsai, lantern SVGs — atmosphere only, hidden behind real photos */
+.atm-svg { position: absolute; inset: 0; pointer-events: none; }
+
+/* Photo footer */
+.photo-foot {
+  margin-top: 2.5rem; padding-top: 1.5rem;
+  border-top: 1px solid rgba(138,90,44,0.1);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.photo-foot-l {
+  font-family: var(--font-mono);
+  font-size: 0.46rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--bronze); opacity: 0.35;
+}
+.photo-foot-r {
+  font-family: var(--font-display);
+  font-size: 0.82rem; font-style: italic; font-weight: 300;
+  color: var(--bronze); opacity: 0.3;
+}
+
+/* ═══════════════════════════════════════════════════════
+   MUSIC — Paris Runway Luxury
+═══════════════════════════════════════════════════════ */
+#music { background: var(--bark); border-top: 1px solid rgba(138,90,44,0.1); }
+
+.runway {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr 1px 1fr;
+}
+.runway-div { background: rgba(138,90,44,0.1); }
+.track-col { padding: 0 2.8rem; }
+.track-col:first-child { padding-left: 0; }
+.track-col:last-child  { padding-right: 0; }
+
+.season-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.44rem; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--bronze); border: 1px solid rgba(138,90,44,0.22);
+  padding: 0.22rem 0.55rem; margin-bottom: 2rem;
+}
+.season-label {
+  font-family: var(--font-mono);
+  font-size: 0.44rem; letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--bronze); opacity: 0.4;
+  margin-bottom: 1.8rem; padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(138,90,44,0.12);
+}
+
+.track {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 1.05rem 0;
+  border-bottom: 1px solid rgba(138,90,44,0.07);
+  cursor: pointer;
+  transition: padding-left 0.35s ease;
+}
+.track:last-child { border-bottom: none; }
+.track:hover { padding-left: 0.4rem; }
+.track:hover .track-name { color: var(--linen); }
+.track:hover .tdot { opacity: 1; }
+
+.tdot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--bronze); opacity: 0; flex-shrink: 0;
+  transition: opacity 0.3s ease;
+}
+.track-info { flex: 1; min-width: 0; }
+.track-name {
+  font-family: var(--font-display);
+  font-size: 0.9rem; font-weight: 400;
+  color: var(--parch); line-height: 1.3;
+  transition: color 0.3s ease;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.track-artist {
+  font-family: var(--font-mono);
+  font-size: 0.44rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--walnut); margin-top: 0.2rem;
+}
+.track-dur {
+  font-family: var(--font-mono);
+  font-size: 0.46rem; color: var(--sienna); flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════════════ */
+footer {
+  background: var(--bark);
+  border-top: 1px solid rgba(138,90,44,0.08);
+  padding: 3.5rem;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.foot-sig {
+  font-family: var(--font-display);
+  font-size: 0.95rem; font-style: italic; font-weight: 300;
+  color: var(--bronze); opacity: 0.3;
+}
+.foot-right {
+  font-family: var(--font-mono);
+  font-size: 0.46rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--sienna); opacity: 0.35;
+}
+
+/* ═══════════════════════════════════════════════════════
+   KEYFRAMES
+═══════════════════════════════════════════════════════ */
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; } to { opacity: 1; }
+}
+@keyframes drip {
+  0%, 100% { transform: scaleY(1); opacity: 0.45; }
+  50%       { transform: scaleY(0.72); opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   PAGE TRANSITIONS
+═══════════════════════════════════════════════════════ */
+.page { animation: pgIn 0.55s ease both; }
+@keyframes pgIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════════════
+   JOURNAL READING VIEW
+═══════════════════════════════════════════════════════ */
+.reading-view { display: none; }
+.reading-view.open { display: block; }
+.reading-wrap {
+  max-width: 680px; margin: 0 auto;
+  padding: 6rem 2rem 8rem;
+}
+.reading-back {
+  font-family: var(--font-mono);
+  font-size: 0.48rem; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--bronze); opacity: 0.5; cursor: pointer; margin-bottom: 4rem;
+  display: inline-block;
+  transition: opacity 0.3s;
+}
+.reading-back:hover { opacity: 1; }
+.reading-cat {
+  font-family: var(--font-mono);
+  font-size: 0.48rem; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--bronze); margin-bottom: 1.2rem; opacity: 0.6;
+}
+.reading-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 300; line-height: 1.1; color: var(--linen);
+  margin-bottom: 1.5rem;
+}
+.reading-title em { font-style: italic; color: var(--parch); }
+.reading-meta {
+  font-family: var(--font-mono);
+  font-size: 0.48rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--walnut); margin-bottom: 3rem;
+  padding-bottom: 2rem; border-bottom: 1px solid rgba(138,90,44,0.15);
+}
+.reading-body {
+  font-family: var(--font-body);
+  font-size: 1.06rem; line-height: 2.0;
+  color: var(--parch); opacity: 0.82;
+}
+.reading-body p { margin-bottom: 1.6rem; }
+.reading-body p:first-child::first-letter {
+  font-family: var(--font-display);
+  font-size: 4rem; font-weight: 300; float: left;
+  line-height: 0.75; margin: 0.1em 0.08em 0 0;
+  color: var(--bronze);
+}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <span class="nav-mark" onclick="showPage('home')" style="cursor:pointer;opacity:0;pointer-events:none;"></span>
+  <ul class="nav-links">
+    <li><a onclick="showPage('journal')">Journal</a></li>
+    <li><a onclick="showPage('projects')">Projects</a></li>
+    <li><a onclick="showPage('photography')">Photography</a></li>
+    <li><a onclick="showPage('music')">Music</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════════════════════════════════
+     HOME
+═══════════════════════════════════════ -->
+<div class="page active" id="home">
+  <section style="min-height:100vh;display:flex;flex-direction:column;justify-content:center;background:var(--bark);padding:0 3.5rem;padding-top:64px;">
+    <h1 class="hero-h1">One world,<br><em>one people</em></h1>
+    <div class="hero-rule"></div>
+    <p class="hero-sub">“The important thing is not to stop questioning. Curiosity has its own reason for existing.”</p>
+    <div class="hero-byline">Albert Einstein</div>
+    <div class="hero-name">Rohan Sedhay</div>
+  </section>
+
+
+</div>
+
+<!-- ═══════════════════════════════════════
+     JOURNAL
+═══════════════════════════════════════ -->
+<div class="page" id="journal">
+  <section class="sec" style="background:var(--mahog);padding-top:7rem;">
+    <div class="sec-head">
+      <h2 class="sec-title">Journal</h2>
+      <span class="sec-more">48 essays</span>
+    </div>
+    <div class="library-shelf">
+      <div class="featured-essay">
+        <div class="essay-vol">Vol. XII · Featured</div>
+        <div class="essay-ornament">⸻</div>
+        <h3 class="essay-title">The Quiet Architecture<br>of <em>Capital</em></h3>
+        <div class="essay-rule"></div>
+        <p class="essay-abstract">When money becomes expensive, cities slow their metabolism. The crane disappears from the skyline before the unemployment numbers arrive. A meditation on the spatial consequences of monetary policy — and what the built environment tells us that the data cannot.</p>
+        <div class="essay-byline">April 2025 &nbsp;·&nbsp; Macroeconomics &nbsp;·&nbsp; 14 min read</div>
+        <div onclick="openEssay()" style="display:inline-block;margin-top:1.8rem;font-family:var(--font-mono);font-size:0.46rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--bronze);opacity:0.6;cursor:pointer;border-bottom:1px solid rgba(138,90,44,0.3);padding-bottom:2px;transition:opacity 0.3s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.6">Read essay →</div>
+      </div>
+      <div class="shelf-div"></div>
+      <div class="essay-list">
+        <div class="entry-row" onclick="openEssay()">
+          <div class="entry-num">II</div>
+          <div>
+            <div class="entry-cat">Cities</div>
+            <div class="entry-title">Tokyo at 3AM: Notes on Urban Solitude</div>
+            <div class="entry-meta">March 2025 · 8 min</div>
+          </div>
+        </div>
+        <div class="entry-row" onclick="openEssay()">
+          <div class="entry-num">III</div>
+          <div>
+            <div class="entry-cat">Architecture</div>
+            <div class="entry-title">Tadao Ando and the Aesthetics of Restraint</div>
+            <div class="entry-meta">Feb 2025 · 6 min</div>
+          </div>
+        </div>
+        <div class="entry-row" onclick="openEssay()">
+          <div class="entry-num">IV</div>
+          <div>
+            <div class="entry-cat">Real Estate</div>
+            <div class="entry-title">Density, Desire, and the Pricing of Place</div>
+            <div class="entry-meta">Jan 2025 · 10 min</div>
+          </div>
+        </div>
+        <div class="entry-row" onclick="openEssay()">
+          <div class="entry-num">V</div>
+          <div>
+            <div class="entry-cat">Culture</div>
+            <div class="entry-title">On Living Slowly in a Fast Economy</div>
+            <div class="entry-meta">Dec 2024 · 7 min</div>
+          </div>
+        </div>
+        <div class="entry-row" onclick="openEssay()">
+          <div class="entry-num">VI</div>
+          <div>
+            <div class="entry-cat">Design</div>
+            <div class="entry-title">What Shaker Furniture Knows About Finance</div>
+            <div class="entry-meta">Nov 2024 · 5 min</div>
+          </div>
+        </div>
+        <div class="entry-row" onclick="openEssay()">
+          <div class="entry-num">VII</div>
+          <div>
+            <div class="entry-cat">Macroeconomics</div>
+            <div class="entry-title">The Dollar, the Desert, and the Decade Ahead</div>
+            <div class="entry-meta">Oct 2024 · 12 min</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- READING VIEW -->
+  <div class="reading-view" id="reading-view" style="background:var(--mahog);">
+    <div class="reading-wrap">
+      <span class="reading-back" onclick="closeEssay()">← Back to Journal</span>
+      <div class="reading-cat">Macroeconomics</div>
+      <h1 class="reading-title">The Quiet Architecture<br>of <em>Capital</em></h1>
+      <div class="reading-meta">April 2025 &nbsp;·&nbsp; 14 min read</div>
+      <div class="reading-body">
+        <p>When money becomes expensive, cities slow their metabolism. The crane disappears from the skyline before the unemployment numbers arrive. This is not metaphor — it is mechanism. The built environment is the most honest ledger of capital allocation, more honest than any earnings report, more legible than any yield curve.</p>
+        <p>Consider what happened to the American sunbelt between 2008 and 2012. Not the foreclosure statistics, which everyone watched. But the topography of incompletion — the half-finished subdivisions at the edge of Phoenix, the concrete pads in outer Las Vegas where houses were poured and then abandoned mid-frame. Capital withdrew and left its skeleton behind.</p>
+        <p>The relationship between interest rates and urban form is not linear. It is atmospheric. When rates are low for long enough, the city begins to believe in itself in a different way. Towers are proposed that would have seemed absurd a decade earlier. Neighborhoods that held their breath for thirty years suddenly exhale. The architecture of optimism has its own grammar.</p>
+        <p>What I find most interesting is not the construction cycle itself, but the latency. The lag between the moment the Federal Open Market Committee changes course and the moment that decision becomes visible in skyline. It is typically eighteen months to four years, depending on project scale and jurisdiction. The buildings we are looking at today were financed in a different interest rate world entirely.</p>
+        <p>This is what the data misses. The models track starts and completions. They do not track what was decided not to build. The vacancy that never announced itself. The architect who drew a building that will never be drawn again.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PROJECTS
+═══════════════════════════════════════ -->
+<div class="page" id="projects">
+  <section class="sec" id="projects" style="background:#060908;padding-top:7rem;padding-bottom:5rem;">
+    <div class="sec-head" style="border-bottom-color:rgba(42,64,40,0.2);">
+      <h2 class="sec-title" style="color:var(--dew);">Projects</h2>
+      <span class="sec-more" style="color:var(--mint);">Full archive</span>
+    </div>
+    <div class="project-grid">
+      <div class="proj s7">
+        <div class="snow-layer" id="s1"></div>
+        <div class="proj-id">SYS://01</div>
+        <div class="proj-tag">Real Estate · Finance</div>
+        <h3 class="proj-title">Urban Density Valuation Model</h3>
+        <p class="proj-desc">A proprietary framework for pricing residential assets in supply-constrained metros. Integrating zoning data, transit adjacency, and demographic velocity.</p>
+        <div class="proj-arrow">Open →</div>
+        <div class="proj-glyph">01</div>
+      </div>
+      <div class="proj s5">
+        <div class="proj-id">SYS://02</div>
+        <div class="proj-tag">Architecture</div>
+        <h3 class="proj-title">The Courtyard House: A Typological Study</h3>
+        <p class="proj-desc">Introverted residential forms across Japanese, Spanish, and Moroccan traditions. Visual research and spatial analysis.</p>
+        <div class="proj-arrow">Open →</div>
+        <div class="proj-glyph">02</div>
+      </div>
+      <div class="proj s4">
+        <div class="snow-layer" id="s2"></div>
+        <div class="proj-id">SYS://03</div>
+        <div class="proj-tag">Macro</div>
+        <h3 class="proj-title">Liquidity Cycles and Asset Geography</h3>
+        <p class="proj-desc">How monetary expansion maps onto urban form across long cycles.</p>
+        <div class="proj-arrow">Open →</div>
+        <div class="proj-glyph">03</div>
+      </div>
+      <div class="proj s8">
+        <div class="proj-id">SYS://04</div>
+        <div class="proj-tag">Visual Research</div>
+        <h3 class="proj-title">Analog Futures: An Ongoing Archive</h3>
+        <p class="proj-desc">Analog photography, architectural sketches, and found material exploring permanence and decay in the built world. Updated continuously.</p>
+        <div class="proj-arrow">Open →</div>
+        <div class="proj-glyph">04</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PHOTOGRAPHY
+═══════════════════════════════════════ -->
+<div class="page" id="photography">
+  <section class="sec" style="background:var(--bark);padding-top:7rem;padding-bottom:5rem;">
+    <div class="sec-head">
+      <h2 class="sec-title">Photography</h2>
+      <span class="sec-more">Full gallery</span>
+    </div>
+    <div class="photo-grid">
+
+      <div class="pslot a">
+<img src="images/TinHouse.jpeg" alt="">
+        <div class="pcap">
+          <span class="pcap-place">Lake Como</span>
+          <span class="pcap-num" style="font-size:0.4rem;letter-spacing:0.15em;color:rgba(160,107,56,0.4);">Lombardy · Golden Hour</span>
+        </div>
+      </div>
+
+      <div class="pslot b">
+        <!-- ADD PHOTO: <img src="images/your-photo.jpg" alt=""> -->
+        <div class="pcap">
+          <span class="pcap-place">Sahara</span>
+          <span class="pcap-num" style="font-size:0.4rem;letter-spacing:0.15em;color:rgba(160,107,56,0.4);">Morocco · Last Light</span>
+        </div>
+      </div>
+
+      <div class="pslot c">
+        <!-- ADD PHOTO: <img src="images/your-photo.jpg" alt=""> -->
+        <div class="pcap">
+          <span class="pcap-place">Kyoto</span>
+          <span class="pcap-num" style="font-size:0.4rem;letter-spacing:0.15em;color:rgba(160,107,56,0.4);">Garden Residence</span>
+        </div>
+      </div>
+
+      <div class="pslot d">
+        <!-- ADD PHOTO: <img src="images/your-photo.jpg" alt=""> -->
+        <div class="pcap"><span class="pcap-place">Kyoto — Autumn</span></div>
+      </div>
+
+      <div class="pslot e">
+        <!-- ADD PHOTO: <img src="images/your-photo.jpg" alt=""> -->
+        <div class="pcap"><span class="pcap-place">Sahara — Dusk</span></div>
+      </div>
+
+      <div class="pslot f">
+        <!-- ADD PHOTO: <img src="images/your-photo.jpg" alt=""> -->
+        <div class="pcap"><span class="pcap-place">Como — Water</span></div>
+      </div>
+
+      <div class="pslot g">
+        <!-- ADD PHOTO: <img src="images/your-photo.jpg" alt=""> -->
+        <div class="pcap"><span class="pcap-place">Kyoto — Moss Garden</span></div>
+      </div>
+
+    </div>
+    <div class="photo-foot">
+      <span class="photo-foot-l">Selected works &nbsp;·&nbsp; 2020 – present</span>
+      <span class="photo-foot-r">stillness, collected</span>
+    </div>
+  </section>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MUSIC
+═══════════════════════════════════════ -->
+<div class="page" id="music">
+  <section class="sec" style="background:var(--bark);padding-top:7rem;">
+    <div class="sec-head">
+      <h2 class="sec-title">Music</h2>
+      <span class="sec-more">Full collection</span>
+    </div>
+    <div class="runway">
+      <div class="track-col">
+        <div class="season-tag">Nocturne I</div>
+        <div class="season-label">Late Night · Soul</div>
+        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">A Case of You</div><div class="track-artist">Joni Mitchell</div></div><div class="track-dur">4:17</div></div>
+        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">This Woman's Work</div><div class="track-artist">Maxwell</div></div><div class="track-dur">5:44</div></div>
+        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">Slow Burn</div><div class="track-artist">Kacey Musgraves</div></div><div class="track-dur">3:49</div></div>
+        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">Be Here</div><div class="track-artist">Raphael Saadiq</div></div><div class="track-dur">4:02</div></div>
+        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">Creep (Acoustic)</div><div class="track-artist">Radiohead</div></div><div class="track-dur">3:58</div></div>
+        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">The Blower's Daughter</div><div class="track-artist">Damien Rice</div></div><div class="track-dur">5:02</div></div>
+      </div>
+      <div class="runway-div"></div>
+      <div class="track-col">
+        <div class="season-tag">Nocturne II</div>
+        <div class="season-label">Architecture · Ambient</div>
+        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">An Ending (Ascent)</div><div class="track-artist">Brian Eno</div></div><div class="track-dur">4:18</div></div>
+        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">Gymnopédie No.1</div><div class="track-artist">Erik Satie</div></div><div class="track-dur">3:22</div></div>
+        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">Lontano</div><div class="track-artist">Ligeti</div></div><div class="track-dur">8:45</div></div>
+        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">Airports 1/1</div><div class="track-artist">Brian Eno</div></div><div class="track-dur">17:02</div></div>
+        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">On Land</div><div class="track-artist">Brian Eno</div></div><div class="track-dur">6:12</div></div>
+        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">Clair de Lune</div><div class="track-artist">Debussy</div></div><div class="track-dur">4:55</div></div>
+      </div>
+      <div class="runway-div"></div>
+      <div class="track-col">
+        <div class="season-tag">Nocturne III</div>
+        <div class="season-label">Fashion · Tension</div>
+        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">Strange Fruit</div><div class="track-artist">Billie Holiday</div></div><div class="track-dur">3:15</div></div>
+        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">I Put a Spell on You</div><div class="track-artist">Nina Simone</div></div><div class="track-dur">4:34</div></div>
+        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">Redbone</div><div class="track-artist">Childish Gambino</div></div><div class="track-dur">5:26</div></div>
+        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">The Way</div><div class="track-artist">Kehlani</div></div><div class="track-dur">3:58</div></div>
+        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">Liability</div><div class="track-artist">Lorde</div></div><div class="track-dur">3:50</div></div>
+        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">Ghost</div><div class="track-artist">Indigo De Souza</div></div><div class="track-dur">3:44</div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <span class="foot-sig">Rohan Sedhay</span>
+  <span class="foot-right">MMXXV &nbsp;·&nbsp; All rights reserved</span>
+</footer>
+
+<script>
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => {
+    p.classList.remove('active');
+    p.style.display = 'none';
+  });
+  const target = document.getElementById(id);
+  if (target) {
+    target.style.display = 'block';
+    target.classList.add('active');
+    window.scrollTo(0, 0);
+  }
+  if (id === 'journal') {
+    const rv = document.getElementById('reading-view');
+    if (rv) rv.classList.remove('open');
+    const shelf = document.querySelector('.library-shelf');
+    if (shelf) shelf.style.display = 'grid';
+  }
+}
+
+// Init — show home, hide everything else
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.page').forEach(p => {
+    p.style.display = p.id === 'home' ? 'block' : 'none';
+  });
+});
+
+function openEssay() {
+  document.querySelector('.library-shelf').style.display = 'none';
+  const rv = document.getElementById('reading-view');
+  rv.classList.add('open');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function closeEssay() {
+  document.getElementById('reading-view').classList.remove('open');
+  document.querySelector('.library-shelf').style.display = 'grid';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Nav scroll state
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// Snow particles
+function snow(id, n) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  for (let i = 0; i < n; i++) {
+    const f = document.createElement('div');
+    f.className = 'flake';
+    const sz = Math.random() < 0.3 ? 2 : 1;
+    f.style.cssText = `left:${Math.random()*100}%;top:${-Math.random()*20}px;width:${sz}px;height:${sz}px;animation-duration:${3+Math.random()*5}s;animation-delay:${Math.random()*6}s;opacity:${0.08+Math.random()*0.22};`;
+    el.appendChild(f);
+  }
+}
+snow('s1', 32); snow('s2', 18);
+</script>
+</body>
+</html>
