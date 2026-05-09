@@ -20,17 +20,17 @@
   --walnut:  #5c3818;
   --tan:     #8a5a2c;
   --bronze:  #a06b38;
-  --parch:   #c8a878;
-  --cream:   #e0cdb0;
-  --linen:   #ece0c8;
+  --parch:   #d8bc90;
+  --cream:   #ece0c8;
+  --linen:   #f5edd8;
 
   --moss:    #080e09;
   --grove:   #0e1810;
   --fern:    #162014;
   --leaf:    #1e2e1a;
-  --sage:    #2a4028;
+  --sage:    #6a9868;
   --mint:    #4a6e48;
-  --dew:     #7a9e78;
+  --dew:     #a8d4a0;
 
   --font-display: 'Cormorant Garamond', Georgia, serif;
   --font-body:    'EB Garamond', Georgia, serif;
@@ -87,7 +87,7 @@ img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .nav-links a {
   font-family: var(--font-mono);
   font-size: 0.52rem; letter-spacing: 0.22em; text-transform: uppercase;
-  color: var(--parch); opacity: 0.45;
+  color: #dcc898; opacity: 0.65;
   transition: opacity 0.35s ease, color 0.35s ease;
   position: relative;
 }
@@ -162,7 +162,7 @@ img { display: block; width: 100%; height: 100%; object-fit: cover; }
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(1rem, 1.6vw, 1.25rem);
   font-weight: 300; letter-spacing: 0.2em; text-transform: uppercase;
-  color: var(--parch); opacity: 0;
+  color: #f0e0c0; opacity: 0;
   margin-top: 2.8rem;
   animation: riseIn 1.1s ease 1.35s forwards;
 }
@@ -246,13 +246,13 @@ img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .essay-abstract {
   font-family: var(--font-body);
   font-size: 0.9rem; line-height: 1.95;
-  color: var(--parch); opacity: 0.72; max-width: 54ch;
+  color: #dcc898; opacity: 1; max-width: 54ch;
   margin-bottom: 2rem;
 }
 .essay-byline {
   font-family: var(--font-mono);
   font-size: 0.48rem; letter-spacing: 0.18em; text-transform: uppercase;
-  color: var(--walnut);
+  color: #b08860;
 }
 
 .essay-list { padding: 2.5rem 0 2.5rem 3rem; }
@@ -274,24 +274,24 @@ img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .entry-cat {
   font-family: var(--font-mono);
   font-size: 0.44rem; letter-spacing: 0.22em; text-transform: uppercase;
-  color: var(--bronze); margin-bottom: 0.4rem; opacity: 0.55;
+  color: #c09060; margin-bottom: 0.4rem; opacity: 1;
 }
 .entry-title {
   font-family: var(--font-display);
   font-size: 0.98rem; font-weight: 400; line-height: 1.35;
-  color: var(--parch); transition: color 0.3s ease;
+  color: #e8d4a8; transition: color 0.3s ease;
 }
 .entry-meta {
   font-family: var(--font-mono);
   font-size: 0.42rem; letter-spacing: 0.15em; text-transform: uppercase;
-  color: var(--sienna); margin-top: 0.35rem;
+  color: #a07050; margin-top: 0.35rem;
 }
 
 /* ═══════════════════════════════════════════════════════
    PROJECTS — Shenzhen / Gas Station Snowstorm
 ═══════════════════════════════════════════════════════ */
 #projects { background: #060908; padding-bottom: 5rem; }
-#projects .sec-title { color: var(--dew); }
+#projects .sec-title { color: #c0e0b8; }
 #projects .sec-more { color: var(--mint); }
 #projects .sec-head { border-bottom-color: rgba(42,64,40,0.2); }
 
@@ -337,7 +337,7 @@ img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .proj-desc {
   font-family: var(--font-mono);
   font-size: 0.55rem; line-height: 1.75;
-  color: var(--sage); opacity: 0.55;
+  color: #7aaa78; opacity: 1;
 }
 .proj-glyph {
   position: absolute; bottom: 1.2rem; right: 1.5rem;
@@ -420,7 +420,7 @@ img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .pcap-place {
   font-family: var(--font-display);
   font-size: 1rem; font-weight: 300; font-style: italic;
-  color: rgba(224,205,176,0.65);
+  color: rgba(240,225,195,0.85);
 }
 .pcap-num {
   font-family: var(--font-mono);
@@ -626,7 +626,7 @@ footer {
 .reading-body {
   font-family: var(--font-body);
   font-size: 1.06rem; line-height: 2.0;
-  color: var(--parch); opacity: 0.82;
+  color: #dcc898; opacity: 1;
 }
 .reading-body p { margin-bottom: 1.6rem; }
 .reading-body p:first-child::first-letter {
@@ -647,7 +647,7 @@ footer {
     <li><a onclick="showPage('journal')">Journal</a></li>
     <li><a onclick="showPage('projects')">Projects</a></li>
     <li><a onclick="showPage('photography')">Photography</a></li>
-    <li><a onclick="showPage('music')">Music</a></li>
+    <li><a onclick="showPage('contact')">Contact</a></li>
   </ul>
 </nav>
 
@@ -871,44 +871,17 @@ footer {
 <!-- ═══════════════════════════════════════
      MUSIC
 ═══════════════════════════════════════ -->
-<div class="page" id="music">
-  <section class="sec" style="background:var(--bark);padding-top:7rem;">
-    <div class="sec-head">
-      <h2 class="sec-title">Music</h2>
-      <span class="sec-more">Full collection</span>
-    </div>
-    <div class="runway">
-      <div class="track-col">
-        <div class="season-tag">Nocturne I</div>
-        <div class="season-label">Late Night · Soul</div>
-        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">A Case of You</div><div class="track-artist">Joni Mitchell</div></div><div class="track-dur">4:17</div></div>
-        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">This Woman's Work</div><div class="track-artist">Maxwell</div></div><div class="track-dur">5:44</div></div>
-        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">Slow Burn</div><div class="track-artist">Kacey Musgraves</div></div><div class="track-dur">3:49</div></div>
-        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">Be Here</div><div class="track-artist">Raphael Saadiq</div></div><div class="track-dur">4:02</div></div>
-        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">Creep (Acoustic)</div><div class="track-artist">Radiohead</div></div><div class="track-dur">3:58</div></div>
-        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">The Blower's Daughter</div><div class="track-artist">Damien Rice</div></div><div class="track-dur">5:02</div></div>
-      </div>
-      <div class="runway-div"></div>
-      <div class="track-col">
-        <div class="season-tag">Nocturne II</div>
-        <div class="season-label">Architecture · Ambient</div>
-        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">An Ending (Ascent)</div><div class="track-artist">Brian Eno</div></div><div class="track-dur">4:18</div></div>
-        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">Gymnopédie No.1</div><div class="track-artist">Erik Satie</div></div><div class="track-dur">3:22</div></div>
-        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">Lontano</div><div class="track-artist">Ligeti</div></div><div class="track-dur">8:45</div></div>
-        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">Airports 1/1</div><div class="track-artist">Brian Eno</div></div><div class="track-dur">17:02</div></div>
-        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">On Land</div><div class="track-artist">Brian Eno</div></div><div class="track-dur">6:12</div></div>
-        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">Clair de Lune</div><div class="track-artist">Debussy</div></div><div class="track-dur">4:55</div></div>
-      </div>
-      <div class="runway-div"></div>
-      <div class="track-col">
-        <div class="season-tag">Nocturne III</div>
-        <div class="season-label">Fashion · Tension</div>
-        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">Strange Fruit</div><div class="track-artist">Billie Holiday</div></div><div class="track-dur">3:15</div></div>
-        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">I Put a Spell on You</div><div class="track-artist">Nina Simone</div></div><div class="track-dur">4:34</div></div>
-        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">Redbone</div><div class="track-artist">Childish Gambino</div></div><div class="track-dur">5:26</div></div>
-        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">The Way</div><div class="track-artist">Kehlani</div></div><div class="track-dur">3:58</div></div>
-        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">Liability</div><div class="track-artist">Lorde</div></div><div class="track-dur">3:50</div></div>
-        <div class="track"><div class="tdot"></div><div class="track-info"><div class="track-name">Ghost</div><div class="track-artist">Indigo De Souza</div></div><div class="track-dur">3:44</div></div>
+
+
+
+<div class="page" id="contact" style="display:none;">
+  <section style="min-height:100vh;display:flex;flex-direction:column;justify-content:center;background:var(--bark);padding:0 3.5rem;padding-top:64px;">
+    <div style="max-width:480px;">
+      <div style="font-family:var(--font-mono);font-size:0.5rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--bronze);opacity:0.6;margin-bottom:2.5rem;">Contact</div>
+      <h2 style="font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(2.5rem,4vw,3.8rem);font-weight:300;color:#f5edd8;line-height:1.05;margin-bottom:2rem;">Rohan<br><em style="font-style:italic;color:#d8bc90;">Sedhay</em></h2>
+      <div style="width:36px;height:1px;background:var(--bronze);opacity:0.5;margin-bottom:2.5rem;"></div>
+      <div style="font-family:'Cormorant Garamond',Georgia,serif;font-size:1.1rem;font-weight:300;color:#dcc898;letter-spacing:0.04em;">
+        [your email here]
       </div>
     </div>
   </section>
